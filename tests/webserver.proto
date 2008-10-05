@@ -1,0 +1,22 @@
+
+package webserver;
+
+message Request {
+  optional int32 ip = 2;        
+  optional Method method = 3;
+  optional int32 responseGiven = 4;
+  enum Method { 
+    POST = 0;
+    GET = 1;
+    PUT = 2;
+    DELETE = 3;
+    HEAD = 4;
+  }
+  repeated Header header = 5;
+  optional string uri = 6;
+}
+
+message Header {
+    required string key = 1;
+    required string value = 2;
+}
