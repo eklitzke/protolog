@@ -37,7 +37,7 @@ def encode(message):
     return header + serialized + NULL
 
 def dumps(messages):
-    "Dump messages to a string of bytes. Note -- this would only be suitable
+    """Dump messages to a string of bytes. Note -- this would only be suitable
     for a relatively small number of messages"""
     return ''.join(encode(message) for message in messageS)
 
