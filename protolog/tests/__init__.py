@@ -50,7 +50,6 @@ class EncoderTests(TestCase):
         lincoln = person_proto.Person(name='Abraham Lincoln', birth_year=1809)
 
         with tempfile.TemporaryFile() as temp_file:
-            import pdb; pdb.set_trace()
             logger = protolog.ProtocolBufferLogger(temp_file)
             logger.append(washington)
             logger.append(lincoln)
