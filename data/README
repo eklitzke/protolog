@@ -1,0 +1,4 @@
+null.dat -- just a single null byte
+urandom.dat -- 1000 bytes of random data, from /dev/urandom
+persons.dat -- two valid protocol buffers
+extra_middle_byte.dat -- like persons.dat, but with an extra null byte inserted between the two records
