@@ -11,8 +11,6 @@ class DecoderTests(TestCase):
     def load_file(name):
         # XXX: assumes you're in an appropriate directory
         return open(os.path.join('data', name), 'rb')
-        return 
-        self.decoder = protolog.ProtoDecoder(f)
 
     def test_null(self):
         self.decoder = protolog.ProtoDecoder(self.load_file('null.dat'))
@@ -74,15 +72,4 @@ class EncoderTests(TestCase):
             assert_equal(temp_file.closed, True)
 
 if __name__ == '__main__':
-
-    def doit(fname, name, birth_year):
-        f = open(fname, 'wb')
-        p = person_proto.Person(name=name, birth_year=birth_year)
-        logger = protolog.ProtocolBufferLogger(f)
-        logger.append(p)
-
-    #doit('a', 'George Washington', 1732)
-    #doit('b', 'Thomas Jefferson', 1743)
-    #doit('c', 'Abraham Lincoln', 1809)
-
-    #run()
+    run()
