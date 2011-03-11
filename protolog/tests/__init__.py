@@ -43,6 +43,14 @@ class DecoderTests(TestCase):
         self.decoder = protolog.ProtocolBufferDecoder(self.load_file('extra_middle_byte.dat'), person_proto.Person)
         self.check_persons()
 
+    def test_persons_with_corruption_dos(self):
+        """This data file consists of three records, and the middle record has
+        its final null byte removed (so the record is corrupted, and cannot be
+        recovered)
+        """
+        self.decoder = protolog.ProtocolBufferDecoder(self.load_file('corrupt.dat'), person_proto.Person)
+        self.check_persons()
+
 class EncoderTests(TestCase):
 
     def test_persons(self):
@@ -66,4 +74,15 @@ class EncoderTests(TestCase):
             assert_equal(temp_file.closed, True)
 
 if __name__ == '__main__':
-    run()
+
+    def doit(fname, name, birth_year):
+        f = open(fname, 'wb')
+        p = person_proto.Person(name=name, birth_year=birth_year)
+        logger = protolog.ProtocolBufferLogger(f)
+        logger.append(p)
+
+    #doit('a', 'George Washington', 1732)
+    #doit('b', 'Thomas Jefferson', 1743)
+    #doit('c', 'Abraham Lincoln', 1809)
+
+    #run()
