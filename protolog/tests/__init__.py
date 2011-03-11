@@ -65,14 +65,4 @@ class EncoderTests(TestCase):
             assert_equal(temp_file.closed, True)
 
 if __name__ == '__main__':
-    f = open('wash', 'wb')
-    washington = person_proto.Person(name='George Washington', birth_year=1732)
-    logger = protolog.ProtocolBufferLogger(f)
-    logger.append(washington)
-
-    f = open('lincoln', 'wb')
-    lincoln = person_proto.Person(name='Abraham Lincoln', birth_year=1809)
-    logger = protolog.ProtocolBufferLogger(f)
-    logger.append(lincoln)
-
-    #run()
+    run()
