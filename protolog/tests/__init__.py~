@@ -1,0 +1,32 @@
+import os
+import protolog
+from testify import *
+
+class DecoderTests(TestCase):
+
+    @staticmethod
+    def load_file(name):
+        # XXX: assumes you're in an appropriate directory
+        f = open(os.path.join('data', name), 'rb')
+        return protolog.ProtoDecoder(f)
+
+    def test_null(self):
+        self.decoder = self.load_file('null.dat')
+        assert_equal(list(self.decoder), [])
+
+    def test_urandom(self):
+        self.decoder = self.load_file('urandom.dat')
+        assert_equal(list(self.decoder), [])
+
+class EncoderTests(TestCase):
+
+    def write_persons(self):
+        washington = person_proto.Person(name='George Washington', birth_year=1732)
+        lincoln = person_proto.Person(name='Abraham Lincoln', birth_year=1809)
+
+        with tempfile.TemporaryFile() as temp_file:
+            logger = protolog.ProtocolBufferLogger(temp_file)
+            logger.append(washington)
+            logger.append(lincoln)
+
+            print temp_file.tell()
