@@ -77,6 +77,10 @@ class ProtoLogger(object):
 
 class ProtoDecoder(object):
 
+    # sanity check the size of messages; don't allow messages if it looks like
+    # the size is greater than this amount. this is to protect against
+    # MemoryErrors and just generally bad memory allocation (e.g. it would be
+    # bad to allocate 90% of memory on a system)
     MAX_MSG_LEN = 100<<20 # 100mb
 
     def __init__(self, file_obj, decoder=None):
@@ -104,7 +108,8 @@ class ProtoDecoder(object):
         read_length = body_len + 1 # to accomodate the null byte
         body = self.file.read(read_length)
         if len(body) < read_length:
-            raise DecodeErrorEOF(init_pos)
+            # XXX: be more specific here
+            raise DecodeError(init_pos)
 
         # check for the null byte first, because that's the cheapest check
         if body[-1] != NULL:

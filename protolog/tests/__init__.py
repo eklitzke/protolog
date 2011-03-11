@@ -21,8 +21,8 @@ class DecoderTests(TestCase):
         self.decoder = protolog.ProtoDecoder(self.load_file('urandom.dat'))
         assert_equal(list(self.decoder), [])
 
-    def test_persons(self):
-        self.decoder = protolog.ProtocolBufferDecoder(self.load_file('persons.dat'), person_proto.Person)
+    def check_persons(self):
+        """a helper for test_persons &c."""
         people = list(self.decoder)
         assert_equal(len(people), 2)
         assert all(isinstance(p, person_proto.Person) for p in people)
@@ -30,6 +30,17 @@ class DecoderTests(TestCase):
         assert_equal(people[0].birth_year, 1732)
         assert_equal(people[1].name, 'Abraham Lincoln')
         assert_equal(people[1].birth_year, 1809)
+
+    def test_persons(self):
+        self.decoder = protolog.ProtocolBufferDecoder(self.load_file('persons.dat'), person_proto.Person)
+        self.check_persons()
+
+    def test_persons_with_corruption(self):
+        """This is like test_persons, but the file has an extra null byte
+        between the two records. The null byte should be skipped over.
+        """
+        self.decoder = protolog.ProtocolBufferDecoder(self.load_file('extra_middle_byte.dat'), person_proto.Person)
+        self.check_persons()
 
 class EncoderTests(TestCase):
 
@@ -54,4 +65,14 @@ class EncoderTests(TestCase):
             assert_equal(temp_file.closed, True)
 
 if __name__ == '__main__':
-    run()
+    f = open('wash', 'wb')
+    washington = person_proto.Person(name='George Washington', birth_year=1732)
+    logger = protolog.ProtocolBufferLogger(f)
+    logger.append(washington)
+
+    f = open('lincoln', 'wb')
+    lincoln = person_proto.Person(name='Abraham Lincoln', birth_year=1809)
+    logger = protolog.ProtocolBufferLogger(f)
+    logger.append(lincoln)
+
+    #run()
