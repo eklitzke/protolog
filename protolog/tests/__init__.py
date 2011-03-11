@@ -45,5 +45,13 @@ class EncoderTests(TestCase):
             # sanity check the length
             assert_equal(temp_file.tell(), 60)
 
+    def test_context_manager(self):
+        """Test using the encoder as a context manager... this is kind of a lame test."""
+        with tempfile.TemporaryFile() as temp_file:
+            assert_equal(temp_file.closed, False)
+            with protolog.ProtocolBufferLogger(temp_file) as logger:
+                pass
+            assert_equal(temp_file.closed, True)
+
 if __name__ == '__main__':
     run()

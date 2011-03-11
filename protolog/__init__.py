@@ -48,9 +48,21 @@ def compute_crc(msg):
     return crc
 
 class ProtoLogger(object):
+    """A protologger, which writes raw byte streams out to a file object. You
+    can also use this as a context manager if you want the file to be
+    automatically closed.
+    """
 
     def __init__(self, file_obj):
         self.file = file_obj
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.file.flush()
+        self.file.close()
+        return
 
     def encode(self, msg):
         if type(msg) is not str: # we really want a raw string here, not subclasses
@@ -93,10 +105,13 @@ class ProtoDecoder(object):
         body = self.file.read(read_length)
         if len(body) < read_length:
             raise DecodeErrorEOF(init_pos)
+
+        # check for the null byte first, because that's the cheapest check
         if body[-1] != NULL:
             raise DecodeErrorMissingNull(init_pos)
 
-        # or do two reads to avoid a memory copy?
+        # compare the seen vs. expected CRC
+        # XXX: or do two reads to avoid a memory copy?
         pb_data = body[:-1]
         actual_crc = compute_crc(pb_data)
 
@@ -105,6 +120,7 @@ class ProtoDecoder(object):
         return pb_data
 
     def __iter__(self):
+        """Return the messages as a stream."""
         while True:
             try:
                 msg = self.get_message()
